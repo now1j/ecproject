@@ -27,5 +27,5 @@
 
 # ERD
 
-# 개발 환경
+# 사용 기술
 Java, Spring, MySql, Git
