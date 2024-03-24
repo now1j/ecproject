@@ -22,6 +22,7 @@
 - [ ] 재고 관리: 셀러는 상품의 재고 수량을 관리할 수 있으며, 재고가 소진되면 추가하거나 상품을 내릴 수 있음 
 
 # ERD
+![ecproject_erd](https://github.com/now1j/ecproject/assets/149587520/8d30aea5-b7f5-4d49-a70f-fc274ae291e9)
 
 # 사용 기술
 Java, Spring, MySql, Git
