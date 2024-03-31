@@ -20,7 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class User implements UserDetails {
+public class Member implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

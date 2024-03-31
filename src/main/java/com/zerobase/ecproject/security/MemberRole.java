@@ -1,6 +1,6 @@
 package com.zerobase.ecproject.security;
 
-public enum UserRole {
+public enum MemberRole {
   CUSTOMER,
   SELLER;
 }
