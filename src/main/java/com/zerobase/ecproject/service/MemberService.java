@@ -22,7 +22,7 @@ public class MemberService implements UserDetailsService {
   private final MemberRepository memberRepository;
   private final PasswordEncoder passwordEncoder;
 
-  @Override
+  @Override         // 사용자 이름을 기반으로 사용자 정보를 로드
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return memberRepository.findByUsername(username)
         .map(member -> new User(member.getUsername(), member.getPassword(),
@@ -30,6 +30,7 @@ public class MemberService implements UserDetailsService {
         .orElseThrow(() -> new UsernameNotFoundException("Member '" + username + "'가 존재하지 않습니다."));
   }
 
+  // 회원가입 처리 메서드
   public Member register(SignUp signUpRequest) {
     if (memberRepository.existsByUsername(signUpRequest.getUsername())) {
       throw new RuntimeException("Error: Username is already taken.");
@@ -43,6 +44,7 @@ public class MemberService implements UserDetailsService {
     return memberRepository.save(member);
   }
 
+  // 사용자 로그인 처리 메서드
   public Member authenticate(SignIn signInRequest) {
     Member member = memberRepository.findByUsername(signInRequest.getUsername())
         .orElseThrow(() -> new UsernameNotFoundException(
