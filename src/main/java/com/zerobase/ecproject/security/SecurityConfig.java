@@ -42,7 +42,6 @@ public class SecurityConfig {
   }
 
   @Bean
-  // 비밀번호를 안전하게 저장하고 검증하는 메커니즘을 제공하는 인터페이스
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder(); // BCrypt 해싱 함수를 사용하여 비밀번호를 인코딩
   }

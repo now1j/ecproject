@@ -53,16 +53,13 @@ public class TokenProvider {
   }
 
   public Authentication getAuthentication(String token) {
-    // 토큰에서 claims를 추출
     Claims claims = Jwts.parser()
         .setSigningKey(secretKey)
         .parseClaimsJws(token)
         .getBody();
 
-    // claims에서 사용자 이름(주체)을 추출
     String username = claims.getSubject();
 
-    // claims에서 권한 정보를 추출하여 GrantedAuthority 리스트로 변환
     @SuppressWarnings("unchecked")
     List<String> roles = claims.get("roles", List.class);
     Collection<? extends GrantedAuthority> authorities =
@@ -70,7 +67,6 @@ public class TokenProvider {
             .map(role -> new SimpleGrantedAuthority(role))
             .collect(Collectors.toList());
 
-    // 인증 객체 생성
     UserDetails principal = new User(username, "", authorities);
     return new UsernamePasswordAuthenticationToken(principal, token, authorities);
   }
