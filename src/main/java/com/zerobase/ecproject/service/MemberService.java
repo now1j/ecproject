@@ -46,10 +46,10 @@ public class MemberService implements UserDetailsService {
   public Member authenticate(SignIn signInRequest) {
     Member member = memberRepository.findByUsername(signInRequest.getUsername())
         .orElseThrow(() -> new UsernameNotFoundException(
-            "User Not Found with username: " + signInRequest.getUsername()));
+            "해당 ID를 찾을 수 없습니다."));
 
     if (!passwordEncoder.matches(signInRequest.getPassword(), member.getPassword())) {
-      throw new RuntimeException("Error: Incorrect password.");
+      throw new RuntimeException("비밀번호가 틀렸습니다.");
     }
 
     return member;
