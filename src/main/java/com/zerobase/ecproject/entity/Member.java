@@ -1,7 +1,10 @@
 package com.zerobase.ecproject.entity;
 
+import com.zerobase.ecproject.security.MemberRole;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,12 +29,13 @@ public class Member implements UserDetails {
   private String password;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  private List<String> roles;
+  @Enumerated(EnumType.STRING) // 열거형 값을 문자열로 저장
+  private List<MemberRole> roles;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return this.roles.stream()
-        .map(SimpleGrantedAuthority::new)
+        .map(role -> new SimpleGrantedAuthority(role.name()))
         .collect(Collectors.toList());
   }
 

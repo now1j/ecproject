@@ -14,6 +14,7 @@ public class Auth {
 
     private String username;
     private String password;
+    private String role;
 
   }
 

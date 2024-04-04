@@ -4,6 +4,7 @@ import com.zerobase.ecproject.dto.Auth.SignIn;
 import com.zerobase.ecproject.dto.Auth.SignUp;
 import com.zerobase.ecproject.entity.Member; // 사용자 정의 Member 엔티티 올바른 임포트
 import com.zerobase.ecproject.repository.MemberRepository;
+import com.zerobase.ecproject.security.MemberRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -39,7 +40,16 @@ public class MemberService implements UserDetailsService {
     Member member = new Member();
     member.setUsername(signUpRequest.getUsername());
     member.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-    member.setRoles(Collections.singletonList("ROLE_MEMBER"));
+
+// signUpRequest에서 받은 String 타입의 role을 MemberRole 열거형으로 변환
+    MemberRole selectedRole;
+    try {
+      selectedRole = MemberRole.valueOf(signUpRequest.getRole().toUpperCase());
+    } catch (IllegalArgumentException | NullPointerException e) {
+      throw new RuntimeException("Invalid role specified.");
+    }
+
+    member.setRoles(Collections.singletonList(selectedRole)); // 변환된 역할 설정
 
     return memberRepository.save(member);
   }
