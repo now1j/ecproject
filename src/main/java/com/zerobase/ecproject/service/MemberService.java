@@ -23,11 +23,11 @@ public class MemberService implements UserDetailsService {
   private final MemberRepository memberRepository;
   private final PasswordEncoder passwordEncoder;
 
-  @Override         // 사용자 이름을 기반으로 사용자 정보를 로드
+  @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return memberRepository.findByUsername(username)
         .map(member -> new User(member.getUsername(), member.getPassword(),
-            Collections.singletonList(new SimpleGrantedAuthority("ROLE_MEMBER"))))
+            Collections.singletonList(new SimpleGrantedAuthority(member.getRole().name()))))
         .orElseThrow(() -> new UsernameNotFoundException("Member '" + username + "'가 존재하지 않습니다."));
   }
 
@@ -41,15 +41,13 @@ public class MemberService implements UserDetailsService {
     member.setUsername(signUpRequest.getUsername());
     member.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
 
-// signUpRequest에서 받은 String 타입의 role을 MemberRole 열거형으로 변환
-    MemberRole selectedRole;
+    // signUpRequest에서 받은 String 타입의 role을 MemberRole 열거형으로 변환
     try {
-      selectedRole = MemberRole.valueOf(signUpRequest.getRole().toUpperCase());
-    } catch (IllegalArgumentException | NullPointerException e) {
+      MemberRole selectedRole = MemberRole.valueOf(signUpRequest.getRole().toUpperCase());
+      member.setRole(selectedRole); // 변환된 역할 설정
+    } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid role specified.");
     }
-
-    member.setRoles(Collections.singletonList(selectedRole)); // 변환된 역할 설정
 
     return memberRepository.save(member);
   }
@@ -57,8 +55,7 @@ public class MemberService implements UserDetailsService {
   // 사용자 로그인 처리 메서드
   public Member authenticate(SignIn signInRequest) {
     Member member = memberRepository.findByUsername(signInRequest.getUsername())
-        .orElseThrow(() -> new UsernameNotFoundException(
-            "해당 ID를 찾을 수 없습니다."));
+        .orElseThrow(() -> new UsernameNotFoundException("해당 ID를 찾을 수 없습니다."));
 
     if (!passwordEncoder.matches(signInRequest.getPassword(), member.getPassword())) {
       throw new RuntimeException("비밀번호가 틀렸습니다.");

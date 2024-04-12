@@ -9,7 +9,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Data;
@@ -28,15 +30,12 @@ public class Member implements UserDetails {
   private String username;
   private String password;
 
-  @ElementCollection(fetch = FetchType.EAGER)
-  @Enumerated(EnumType.STRING) // 열거형 값을 문자열로 저장
-  private List<MemberRole> roles;
+  @Enumerated(EnumType.STRING)
+  private MemberRole role;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return this.roles.stream()
-        .map(role -> new SimpleGrantedAuthority(role.name()))
-        .collect(Collectors.toList());
+    return Collections.singletonList(new SimpleGrantedAuthority(this.role.name()));
   }
 
   @Override

@@ -3,6 +3,7 @@ package com.zerobase.ecproject.controller;
 import com.zerobase.ecproject.dto.Auth;
 import com.zerobase.ecproject.security.TokenProvider;
 import com.zerobase.ecproject.service.MemberService;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +31,9 @@ public class AuthController {
   @PostMapping("/signin")
   public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
     var member = this.memberService.authenticate(request);
-    // MemberRole 열거형 리스트를 문자열 리스트로 변환
-    var rolesAsString = member.getRoles().stream()
-        .map(Enum::name)
-        .collect(Collectors.toList());
-    var token = this.tokenProvider.generateToken(member.getUsername(), rolesAsString);
+    var roleAsString = member.getRole().name();
+    var token = this.tokenProvider.generateToken(member.getUsername(),
+        Collections.singletonList(roleAsString));
     return ResponseEntity.ok(token);
   }
 }
