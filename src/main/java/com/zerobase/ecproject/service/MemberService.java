@@ -28,13 +28,13 @@ public class MemberService implements UserDetailsService {
     return memberRepository.findByUsername(username)
         .map(member -> new User(member.getUsername(), member.getPassword(),
             Collections.singletonList(new SimpleGrantedAuthority(member.getRole().name()))))
-        .orElseThrow(() -> new UsernameNotFoundException("Member '" + username + "'가 존재하지 않습니다."));
+        .orElseThrow(() -> new UsernameNotFoundException("사용자 '" + username + "'를 찾을 수 없습니다."));
   }
 
   // 회원가입 처리 메서드
   public Member register(SignUp signUpRequest) {
     if (memberRepository.existsByUsername(signUpRequest.getUsername())) {
-      throw new RuntimeException("Error: Username is already taken.");
+      throw new RuntimeException("오류: 이미 사용 중인 사용자 이름입니다.");
     }
 
     Member member = new Member();
@@ -46,7 +46,7 @@ public class MemberService implements UserDetailsService {
       MemberRole selectedRole = MemberRole.valueOf(signUpRequest.getRole().toUpperCase());
       member.setRole(selectedRole); // 변환된 역할 설정
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid role specified.");
+      throw new RuntimeException("역할이 유효하지 않습니다.");
     }
 
     return memberRepository.save(member);

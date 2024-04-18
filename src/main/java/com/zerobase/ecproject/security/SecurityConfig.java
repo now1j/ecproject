@@ -25,6 +25,7 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/auth/signup", "/auth/signin").permitAll()
+            .requestMatchers("/stores/**").hasAuthority("SELLER")
             .anyRequest().authenticated()
         )
         .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

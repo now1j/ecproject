@@ -1,9 +1,12 @@
 package com.zerobase.ecproject.service;
 
+import com.zerobase.ecproject.dto.ProductDTO;
 import com.zerobase.ecproject.entity.Product;
+import com.zerobase.ecproject.entity.Store;
 import com.zerobase.ecproject.repository.ProductRepository;
 import com.zerobase.ecproject.repository.StoreRepository;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +20,10 @@ public class ProductService {
   private StoreRepository storeRepository;
 
   public Product createProduct(Product product, Long storeId) {
-    return storeRepository.findById(storeId).map(store -> {
-      product.setStore(store);
-      return productRepository.save(product);
-    }).orElseThrow(() -> new RuntimeException("Store not found with id " + storeId));
+    Store store = storeRepository.findById(storeId)
+        .orElseThrow(() -> new RuntimeException("Store not found with id " + storeId));
+    product.setStore(store);
+    return productRepository.save(product);
   }
 
   public Product updateProduct(Long productId, Product updatedProduct) {
@@ -56,5 +59,21 @@ public class ProductService {
     }
     product.setStockQuantity(product.getStockQuantity() - quantity);
     productRepository.save(product);
+  }
+
+  public List<Product> searchProductsByName(String name) {
+    return productRepository.findByNameContainingIgnoreCase(name);
+  }
+
+  public ProductDTO convertToDTO(Product product) {
+    ProductDTO dto = new ProductDTO();
+    dto.setId(product.getId());
+    dto.setName(product.getName());
+    dto.setDescription(product.getDescription());
+    dto.setPrice(product.getPrice());
+    dto.setCategory(product.getCategory());
+    dto.setStockQuantity(product.getStockQuantity());
+    dto.setStoreId(product.getStore() != null ? product.getStore().getId() : null);
+    return dto;
   }
 }
