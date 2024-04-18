@@ -4,33 +4,27 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 
-@Data
 @Entity
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class Product {
-
+@AllArgsConstructor
+public class Cart {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String name;
-  private String description;
-  private Integer price;
-  private String category;
-  private Integer stockQuantity;
+  @OneToOne
+  private Member member;
 
-  @ManyToOne
-  @JoinColumn(name = "store_id")
-  private Store store;
-
-  public Product(Long id) {
-    this.id = id;
-  }
+  @OneToMany(mappedBy = "cart")
+  private List<CartItem> items = new ArrayList<>();
 }
